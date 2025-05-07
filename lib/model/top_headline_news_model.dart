@@ -1,15 +1,17 @@
 class TopHeadlineNewsModel {
   String? status;
-  List<Sources>? sources;
+  int? totalResults;
+  List<Articles>? articles;
 
-  TopHeadlineNewsModel({this.status, this.sources});
+  TopHeadlineNewsModel({this.status, this.totalResults, this.articles});
 
   TopHeadlineNewsModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    if (json['sources'] != null) {
-      sources = <Sources>[];
-      json['sources'].forEach((v) {
-        sources!.add(new Sources.fromJson(v));
+    totalResults = json['totalResults'];
+    if (json['articles'] != null) {
+      articles = <Articles>[];
+      json['articles'].forEach((v) {
+        articles!.add(new Articles.fromJson(v));
       });
     }
   }
@@ -17,51 +19,78 @@ class TopHeadlineNewsModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['status'] = this.status;
-    if (this.sources != null) {
-      data['sources'] = this.sources!.map((v) => v.toJson()).toList();
+    data['totalResults'] = this.totalResults;
+    if (this.articles != null) {
+      data['articles'] = this.articles!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
-class Sources {
-  String? id;
-  String? name;
+class Articles {
+  Source? source;
+  String? author;
+  String? title;
   String? description;
   String? url;
-  String? category;
-  String? language;
-  String? country;
+  String? urlToImage;
+  String? publishedAt;
+  String? content;
 
-  Sources({
-    this.id,
-    this.name,
+  Articles({
+    this.source,
+    this.author,
+    this.title,
     this.description,
     this.url,
-    this.category,
-    this.language,
-    this.country,
+    this.urlToImage,
+    this.publishedAt,
+    this.content,
   });
 
-  Sources.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
+  Articles.fromJson(Map<String, dynamic> json) {
+    source =
+        json['source'] != null ? new Source.fromJson(json['source']) : null;
+    author = json['author'];
+    title = json['title'];
     description = json['description'];
     url = json['url'];
-    category = json['category'];
-    language = json['language'];
-    country = json['country'];
+    urlToImage = json['urlToImage'];
+    publishedAt = json['publishedAt'];
+    content = json['content'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.source != null) {
+      data['source'] = this.source!.toJson();
+    }
+    data['author'] = this.author;
+    data['title'] = this.title;
+    data['description'] = this.description;
+    data['url'] = this.url;
+    data['urlToImage'] = this.urlToImage;
+    data['publishedAt'] = this.publishedAt;
+    data['content'] = this.content;
+    return data;
+  }
+}
+
+class Source {
+  String? id;
+  String? name;
+
+  Source({this.id, this.name});
+
+  Source.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
-    data['description'] = this.description;
-    data['url'] = this.url;
-    data['category'] = this.category;
-    data['language'] = this.language;
-    data['country'] = this.country;
     return data;
   }
 }
