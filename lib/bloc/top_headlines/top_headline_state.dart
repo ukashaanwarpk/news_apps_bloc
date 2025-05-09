@@ -5,12 +5,20 @@ import 'package:news_apps_bloc/model/top_headline_news_model.dart';
 class TopHeadlineState extends Equatable {
   final ApiResponse<TopHeadlineNewsModel> apiResponse;
 
-  const TopHeadlineState({required this.apiResponse});
+  final int sliderIndex;
+
+  const TopHeadlineState({required this.apiResponse, this.sliderIndex = 0});
 
   @override
-  List<Object?> get props => [apiResponse];
+  List<Object?> get props => [apiResponse, sliderIndex];
 
-  TopHeadlineState copyWith(ApiResponse<TopHeadlineNewsModel>? apiResponse) {
-    return TopHeadlineState(apiResponse: apiResponse ?? this.apiResponse);
+  TopHeadlineState copyWith({
+    ApiResponse<TopHeadlineNewsModel>? apiResponse,
+    int? sliderIndex,
+  }) {
+    return TopHeadlineState(
+      apiResponse: apiResponse ?? this.apiResponse,
+      sliderIndex: sliderIndex ?? this.sliderIndex,
+    );
   }
 }
