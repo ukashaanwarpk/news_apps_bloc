@@ -23,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late TopHeadlineBloc topHeadlineBloc;
 
   String channelName = 'bbc-news';
+  final _carouselController = carousel.CarouselSliderController();
 
   List<String> channelList = [
     'bbc-news',
@@ -100,6 +101,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               channelName == channel
                                   ? AppColors.primaryColor
                                   : AppColors.lightGreyColor,
+                          gradient:
+                              channelName == channel
+                                  ? AppColors.gradientColor
+                                  : null,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Center(
@@ -139,165 +144,105 @@ class _HomeScreenState extends State<HomeScreen> {
                           return const Center(child: Text('No data available'));
                         }
                         final topNews = state.apiResponse.data!;
-                        final articals =
-                            topNews.articles!.map((e) => e).take(5).toList();
-                        debugPrint('The articals length is ${articals.length}');
-
-                        final List<String> imageUrls =
-                            articals
-                                .map((e) => e.urlToImage.toString())
-                                .toList();
+                        final articals = topNews.articles ?? [];
 
                         return SizedBox(
                           height: size.height * 0.45,
                           child: ListView.builder(
                             shrinkWrap: true,
+                            physics: const BouncingScrollPhysics(),
                             itemCount: articals.length,
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (context, index) {
-                              final news = articals[state.sliderIndex];
-
+                              final news = articals[index];
                               final dateTime = timeago.format(
                                 DateTime.parse(news.publishedAt!),
                               );
-                              return Column(
+                              return Stack(
                                 children: [
-                                  Stack(
-                                    children: [
-                                      SizedBox(
-                                        height: size.height * 0.30,
-                                        width: size.width * 0.90,
-                                        child: carousel.CarouselSlider.builder(
-                                          itemCount: imageUrls.length,
-                                          itemBuilder:
-                                              (
-                                                context,
-                                                index,
-                                                realIndex,
-                                              ) => Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                    ),
-                                                child: TCachedNetwrokImage(
-                                                  radius: 20,
-                                                  height: double.infinity,
-                                                  width: double.infinity,
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                    ),
+                                    child: TCachedNetwrokImage(
+                                      radius: 20,
+                                      height: size.height * 0.30,
+                                      width: size.width * 0.90,
 
-                                                  imageUrl: imageUrls[index],
-                                                ),
-                                              ),
-                                          options: carousel.CarouselOptions(
-                                            initialPage: 0,
-                                            onPageChanged: (index, reason) {
-                                              context
-                                                  .read<TopHeadlineBloc>()
-                                                  .add(
-                                                    SliderIndexEvent(
-                                                      index: index,
-                                                    ),
-                                                  );
-                                            },
-
-                                            viewportFraction: 1,
-                                            aspectRatio: 16 / 9,
-                                            enableInfiniteScroll: true,
-                                            reverse: false,
-                                            autoPlay: true,
-                                            autoPlayInterval: Duration(
-                                              seconds: 3,
-                                            ),
-                                            autoPlayAnimationDuration: Duration(
-                                              milliseconds: 800,
-                                            ),
-                                            autoPlayCurve: Curves.fastOutSlowIn,
-                                            scrollDirection: Axis.horizontal,
-                                          ),
-                                        ),
-                                      ),
-
-                                      Positioned(
-                                        bottom: 90,
-                                        left: 30,
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              news.source!.name.toString(),
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            SizedBox(width: 10),
-                                            Container(
-                                              height: 6,
-                                              width: 6,
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                shape: BoxShape.circle,
-                                              ),
-                                            ),
-                                            SizedBox(width: 10),
-                                            Text(
-                                              dateTime,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Positioned(
-                                        bottom: 20,
-                                        left: 30,
-                                        child: SizedBox(
-                                          width: size.width * 0.70,
-                                          child: Text(
-                                            news.title.toString(),
-                                            maxLines: 3,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                      imageUrl: news.urlToImage.toString(),
+                                    ),
                                   ),
-                                  SizedBox(height: 12),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children:
-                                        imageUrls.asMap().entries.map((entry) {
-                                          final isActive =
-                                              entry.key == state.sliderIndex;
-                                          return Container(
-                                            width: isActive ? 30.0 : 8.0,
-                                            height: isActive ? 8.0 : 8.0,
-                                            margin: const EdgeInsets.symmetric(
-                                              horizontal: 4.0,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              shape:
-                                                  isActive
-                                                      ? BoxShape.rectangle
-                                                      : BoxShape.circle,
-                                              borderRadius:
-                                                  isActive
-                                                      ? BorderRadius.circular(
-                                                        20,
-                                                      )
-                                                      : null,
-                                              color:
-                                                  isActive
-                                                      ? AppColors.primaryColor
-                                                      : AppColors
-                                                          .lightGreyColor,
-                                            ),
-                                          );
-                                        }).toList(),
+
+                                  Positioned(
+                                    top: 10,
+                                    right: 30,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(6),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.greyColor.withValues(
+                                          alpha: 0.55,
+                                        ),
+
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        '${articals.length}/${index + 1}',
+                                        style: TextStyle(
+                                          color: AppColors.whiteColor,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                                  Positioned(
+                                    left: 30,
+                                    top: 120,
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          news.source!.name.toString(),
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Container(
+                                          height: 6,
+                                          width: 6,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          dateTime,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 90,
+                                    left: 30,
+                                    child: SizedBox(
+                                      height: 100,
+                                      width: size.width * 0.70,
+                                      child: Text(
+                                        news.title.toString(),
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ],
                               );

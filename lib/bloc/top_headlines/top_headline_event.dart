@@ -8,11 +8,3 @@ class GetTopHeadlineEvent extends TopHeadlineEvent {
   @override
   List<Object?> get props => [channelName];
 }
-
-class SliderIndexEvent extends TopHeadlineEvent {
-  final int index;
-  SliderIndexEvent({required this.index});
-
-  @override
-  List<Object?> get props => [index];
-}

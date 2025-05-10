@@ -9,7 +9,6 @@ class TopHeadlineBloc extends Bloc<TopHeadlineEvent, TopHeadlineState> {
   TopHeadlineBloc({required this.newsRepository})
     : super(TopHeadlineState(apiResponse: ApiResponse.loading())) {
     on<GetTopHeadlineEvent>(_getTopHeadlineEvent);
-    on<SliderIndexEvent>(_sliderIndexEvent);
   }
 
   void _getTopHeadlineEvent(
@@ -26,12 +25,5 @@ class TopHeadlineBloc extends Bloc<TopHeadlineEvent, TopHeadlineState> {
             TopHeadlineState(apiResponse: ApiResponse.error(error.toString())),
           );
         });
-  }
-
-  void _sliderIndexEvent(
-    SliderIndexEvent event,
-    Emitter<TopHeadlineState> emit,
-  ) {
-    emit(state.copyWith(sliderIndex: event.index));
   }
 }
