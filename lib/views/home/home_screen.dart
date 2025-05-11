@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:news_apps_bloc/bloc/top_headlines/top_headline_bloc.dart';
-import 'package:news_apps_bloc/bloc/top_headlines/top_headline_event.dart';
-import 'package:news_apps_bloc/bloc/top_headlines/top_headline_state.dart';
+import 'package:news_apps_bloc/bloc/top_headlines/news_bloc.dart';
+import 'package:news_apps_bloc/bloc/top_headlines/news_event.dart';
+import 'package:news_apps_bloc/bloc/top_headlines/news_state.dart';
 import 'package:news_apps_bloc/config/colors/app_colors.dart';
 import 'package:news_apps_bloc/res/components/cached_network_image.dart';
 import 'package:news_apps_bloc/res/components/circular_icon.dart';
 import 'package:news_apps_bloc/utils/enums.dart';
 import 'package:news_apps_bloc/utils/service_locator.dart';
 import '../../res/components/heading_text.dart';
-import 'package:carousel_slider/carousel_slider.dart' as carousel;
 import 'package:timeago/timeago.dart' as timeago;
 
 class HomeScreen extends StatefulWidget {
@@ -20,10 +19,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late TopHeadlineBloc topHeadlineBloc;
+  late NewsBloc newsBloc;
 
   String channelName = 'bbc-news';
-  final _carouselController = carousel.CarouselSliderController();
+  String categoryName = 'general';
 
   List<String> channelList = [
     'bbc-news',
@@ -37,14 +36,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    topHeadlineBloc = TopHeadlineBloc(newsRepository: getIt());
-    topHeadlineBloc.add(GetTopHeadlineEvent(channelName: channelName));
+    newsBloc = NewsBloc(newsRepository: getIt());
+    newsBloc.add(GetTopHeadlineEvent(channelName: channelName));
   }
 
   @override
   void dispose() {
     super.dispose();
-    topHeadlineBloc.close();
+    newsBloc.close();
   }
 
   @override
@@ -89,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         // when channel changed we need to get new news
 
-                        topHeadlineBloc.add(
+                        newsBloc.add(
                           GetTopHeadlineEvent(channelName: channelName),
                         );
                       },
@@ -125,25 +124,27 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               SizedBox(height: 20),
 
-              THeadingText(title: 'Top Headline'),
+              THeadingText(title: 'Top Headline', show: false),
               SizedBox(height: 20),
 
               BlocProvider(
-                create: (_) => topHeadlineBloc,
-                child: BlocBuilder<TopHeadlineBloc, TopHeadlineState>(
+                create: (_) => newsBloc,
+                child: BlocBuilder<NewsBloc, NewsState>(
                   builder: (context, state) {
-                    switch (state.apiResponse.status) {
+                    switch (state.apiResponseChannel.status) {
                       case Status.loading:
                         return const Center(child: CircularProgressIndicator());
                       case Status.error:
                         return Center(
-                          child: Text(state.apiResponse.message.toString()),
+                          child: Text(
+                            state.apiResponseChannel.message.toString(),
+                          ),
                         );
                       case Status.success:
-                        if (state.apiResponse.data == null) {
+                        if (state.apiResponseChannel.data == null) {
                           return const Center(child: Text('No data available'));
                         }
-                        final topNews = state.apiResponse.data!;
+                        final topNews = state.apiResponseChannel.data!;
                         final articals = topNews.articles ?? [];
 
                         return SizedBox(
@@ -254,6 +255,93 @@ class _HomeScreenState extends State<HomeScreen> {
                     }
                   },
                 ),
+              ),
+              SizedBox(height: 20),
+
+              THeadingText(title: 'Latest News'),
+
+              BlocBuilder<NewsBloc, NewsState>(
+                builder: (context, state) {
+                  switch (state.apiResponseCategory.status) {
+                    case Status.loading:
+                      return const Center(child: CircularProgressIndicator());
+                    case Status.error:
+                      return Center(
+                        child: Text(
+                          state.apiResponseCategory.message.toString(),
+                        ),
+                      );
+                    case Status.success:
+                      if (state.apiResponseChannel.data == null) {
+                        return const Center(child: Text('No data available'));
+                      }
+                      final topNews = state.apiResponseCategory.data!;
+                      final articals = topNews.articles ?? [];
+
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: articals.length,
+
+                        itemBuilder: (context, index) {
+                          final category = articals[index];
+                          final dateTime = timeago.format(
+                            DateTime.parse(category.publishedAt!),
+                          );
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.lightGreyColor,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                TCachedNetwrokImage(
+                                  imageUrl: category.urlToImage.toString(),
+                                  height: 100,
+                                  width: 100,
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        category.source!.name.toString(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 10),
+
+                                      Text(
+                                        category.title.toString(),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        dateTime,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    default:
+                      return SizedBox();
+                  }
+                },
               ),
             ],
           ),
