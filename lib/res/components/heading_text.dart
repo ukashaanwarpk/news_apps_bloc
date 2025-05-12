@@ -5,11 +5,13 @@ class THeadingText extends StatelessWidget {
   final VoidCallback? onPress;
   final String title;
   final String subtitle;
+  final bool show;
   const THeadingText({
     super.key,
     this.onPress,
     required this.title,
     this.subtitle = 'View all',
+    this.show = true,
   });
 
   @override
@@ -21,14 +23,15 @@ class THeadingText extends StatelessWidget {
           title,
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        Text(
-          subtitle,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            color: AppColors.primaryColor,
+        if (show)
+          Text(
+            subtitle,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: AppColors.greyColor,
+            ),
           ),
-        ),
       ],
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:news_apps_bloc/bloc/top_headlines/news_bloc.dart';
 import 'package:news_apps_bloc/bloc/top_headlines/news_event.dart';
 import 'package:news_apps_bloc/bloc/top_headlines/news_state.dart';
@@ -38,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     newsBloc = NewsBloc(newsRepository: getIt());
     newsBloc.add(GetTopHeadlineEvent(channelName: channelName));
+    newsBloc.add(GetCategoryEvent(category: categoryName));
   }
 
   @override
@@ -66,70 +68,67 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 40,
-                child: ListView.builder(
-                  itemCount: channelList.length,
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    final channel = channelList[index];
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          channelName = channel;
-                          debugPrint('The channel name is $channelName');
-                        });
+      body: BlocProvider(
+        create: (_) => newsBloc,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 40,
+                  child: ListView.builder(
+                    itemCount: channelList.length,
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      final channel = channelList[index];
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            channelName = channel;
+                            debugPrint('The channel name is $channelName');
+                          });
 
-                        // when channel changed we need to get new news
+                          // when channel changed we need to get new news
 
-                        newsBloc.add(
-                          GetTopHeadlineEvent(channelName: channelName),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        margin: EdgeInsets.symmetric(horizontal: 10),
-                        decoration: BoxDecoration(
-                          color:
-                              channelName == channel
-                                  ? AppColors.primaryColor
-                                  : AppColors.lightGreyColor,
-                          gradient:
-                              channelName == channel
-                                  ? AppColors.gradientColor
-                                  : null,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Center(
-                          child: Text(
-                            channel,
-                            style: TextStyle(
-                              color:
-                                  channelName == channel
-                                      ? AppColors.whiteColor
-                                      : AppColors.blackColor,
+                          newsBloc.add(
+                            GetTopHeadlineEvent(channelName: channelName),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          decoration: BoxDecoration(
+                            color:
+                                channelName == channel
+                                    ? Colors.redAccent
+                                    : AppColors.lightGreyColor,
+
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Center(
+                            child: Text(
+                              channel,
+                              style: TextStyle(
+                                color:
+                                    channelName == channel
+                                        ? AppColors.whiteColor
+                                        : AppColors.blackColor,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
-              ),
-              SizedBox(height: 20),
+                SizedBox(height: 20),
 
-              THeadingText(title: 'Top Headline', show: false),
-              SizedBox(height: 20),
+                THeadingText(title: 'Top Headline', show: false),
+                SizedBox(height: 20),
 
-              BlocProvider(
-                create: (_) => newsBloc,
-                child: BlocBuilder<NewsBloc, NewsState>(
+                BlocBuilder<NewsBloc, NewsState>(
                   builder: (context, state) {
                     switch (state.apiResponseChannel.status) {
                       case Status.loading:
@@ -148,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         final articals = topNews.articles ?? [];
 
                         return SizedBox(
-                          height: size.height * 0.45,
+                          height: size.height * 0.30,
                           child: ListView.builder(
                             shrinkWrap: true,
                             physics: const BouncingScrollPhysics(),
@@ -198,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                   Positioned(
                                     left: 30,
-                                    top: 120,
+                                    top: 130,
                                     child: Row(
                                       children: [
                                         Text(
@@ -229,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                   Positioned(
-                                    bottom: 90,
+                                    bottom: -30,
                                     left: 30,
                                     child: SizedBox(
                                       height: 100,
@@ -255,95 +254,133 @@ class _HomeScreenState extends State<HomeScreen> {
                     }
                   },
                 ),
-              ),
-              SizedBox(height: 20),
+                SizedBox(height: 20),
 
-              THeadingText(title: 'Latest News'),
+                THeadingText(title: 'Latest News'),
 
-              BlocBuilder<NewsBloc, NewsState>(
-                builder: (context, state) {
-                  switch (state.apiResponseCategory.status) {
-                    case Status.loading:
-                      return const Center(child: CircularProgressIndicator());
-                    case Status.error:
-                      return Center(
-                        child: Text(
-                          state.apiResponseCategory.message.toString(),
-                        ),
-                      );
-                    case Status.success:
-                      if (state.apiResponseChannel.data == null) {
-                        return const Center(child: Text('No data available'));
-                      }
-                      final topNews = state.apiResponseCategory.data!;
-                      final articals = topNews.articles ?? [];
+                BlocBuilder<NewsBloc, NewsState>(
+                  builder: (context, state) {
+                    switch (state.apiResponseCategory.status) {
+                      case Status.loading:
+                        return const Center(child: CircularProgressIndicator());
+                      case Status.error:
+                        return Center(
+                          child: Text(
+                            state.apiResponseCategory.message.toString(),
+                          ),
+                        );
+                      case Status.success:
+                        if (state.apiResponseChannel.data == null) {
+                          return const Center(child: Text('No data available'));
+                        }
+                        final topNews = state.apiResponseCategory.data!;
+                        final articals = topNews.articles ?? [];
 
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: articals.length,
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: articals.length,
 
-                        itemBuilder: (context, index) {
-                          final category = articals[index];
-                          final dateTime = timeago.format(
-                            DateTime.parse(category.publishedAt!),
-                          );
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: AppColors.lightGreyColor,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              children: [
-                                TCachedNetwrokImage(
-                                  imageUrl: category.urlToImage.toString(),
-                                  height: 100,
-                                  width: 100,
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        category.source!.name.toString(),
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(height: 10),
+                          itemBuilder: (context, index) {
+                            final category = articals[index];
+                            final dateTime = DateFormat('dd MMM yyyy').format(
+                              DateTime.parse(category.publishedAt.toString()),
+                            );
+                            return Container(
+                              margin: EdgeInsets.symmetric(vertical: 10),
 
-                                      Text(
-                                        category.title.toString(),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        dateTime,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.08),
+                                    blurRadius: 8,
+                                    offset: Offset(0, 4),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    default:
-                      return SizedBox();
-                  }
-                },
-              ),
-            ],
+                                ],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TCachedNetwrokImage(
+                                    imageUrl: category.urlToImage.toString(),
+
+                                    width: size.width * 0.30,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          margin: const EdgeInsets.only(
+                                            top: 10,
+                                          ),
+                                          padding:
+                                              const EdgeInsets.all(
+                                                5,
+                                              ).copyWith(),
+                                          decoration: BoxDecoration(
+                                            color: Colors.redAccent,
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            category.source!.name.toString(),
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: 10),
+
+                                        SizedBox(
+                                          height: 60,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                              right: 10.0,
+                                            ),
+                                            child: Text(
+                                              category.title.toString(),
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                color: AppColors.blackColor,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: 10),
+
+                                        Text(
+                                          dateTime,
+                                          style: TextStyle(
+                                            color: AppColors.blackColor,
+
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      default:
+                        return SizedBox();
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
