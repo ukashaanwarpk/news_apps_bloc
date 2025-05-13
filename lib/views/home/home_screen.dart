@@ -5,6 +5,7 @@ import 'package:news_apps_bloc/bloc/top_headlines/news_bloc.dart';
 import 'package:news_apps_bloc/bloc/top_headlines/news_event.dart';
 import 'package:news_apps_bloc/bloc/top_headlines/news_state.dart';
 import 'package:news_apps_bloc/config/colors/app_colors.dart';
+import 'package:news_apps_bloc/config/routes/route_name.dart';
 import 'package:news_apps_bloc/res/components/cached_network_image.dart';
 import 'package:news_apps_bloc/res/components/circular_icon.dart';
 import 'package:news_apps_bloc/utils/enums.dart';
@@ -274,102 +275,118 @@ class _HomeScreenState extends State<HomeScreen> {
                           return const Center(child: Text('No data available'));
                         }
                         final topNews = state.apiResponseCategory.data!;
-                        final articals = topNews.articles ?? [];
+                        final articles = topNews.articles ?? [];
 
                         return ListView.builder(
                           shrinkWrap: true,
                           physics: const BouncingScrollPhysics(),
-                          itemCount: articals.length,
+                          itemCount: articles.length,
 
                           itemBuilder: (context, index) {
-                            final category = articals[index];
+                            final article = articles[index];
                             final dateTime = DateFormat('dd MMM yyyy').format(
-                              DateTime.parse(category.publishedAt.toString()),
+                              DateTime.parse(article.publishedAt.toString()),
                             );
-                            return Container(
-                              margin: EdgeInsets.symmetric(vertical: 10),
-
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.08),
-                                    blurRadius: 8,
-                                    offset: Offset(0, 4),
+                            return GestureDetector(
+                              onTap:
+                                  () => Navigator.pushNamed(
+                                    context,
+                                    RouteName.detail,
+                                    arguments: {
+                                      'article': article,
+                                      'index': index,
+                                    },
                                   ),
-                                ],
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  TCachedNetwrokImage(
-                                    imageUrl: category.urlToImage.toString(),
+                              child: Container(
+                                margin: EdgeInsets.symmetric(vertical: 10),
 
-                                    width: size.width * 0.30,
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          margin: const EdgeInsets.only(
-                                            top: 10,
-                                          ),
-                                          padding:
-                                              const EdgeInsets.all(
-                                                5,
-                                              ).copyWith(),
-                                          decoration: BoxDecoration(
-                                            color: Colors.redAccent,
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          ),
-                                          child: Text(
-                                            category.source!.name.toString(),
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(
+                                        alpha: 0.08,
+                                      ),
+                                      blurRadius: 8,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ],
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Hero(
+                                      tag:
+                                          'image$index${article.urlToImage.toString()}',
+                                      child: TCachedNetwrokImage(
+                                        imageUrl: article.urlToImage.toString(),
 
-                                        SizedBox(
-                                          height: 60,
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                              right: 10.0,
+                                        width: size.width * 0.30,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            margin: const EdgeInsets.only(
+                                              top: 10,
+                                            ),
+                                            padding:
+                                                const EdgeInsets.all(
+                                                  5,
+                                                ).copyWith(),
+                                            decoration: BoxDecoration(
+                                              color: Colors.redAccent,
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
                                             child: Text(
-                                              category.title.toString(),
-                                              maxLines: 3,
-                                              overflow: TextOverflow.ellipsis,
+                                              article.source!.name.toString(),
                                               style: TextStyle(
-                                                color: AppColors.blackColor,
+                                                color: Colors.white,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(height: 10),
+                                          SizedBox(height: 10),
 
-                                        Text(
-                                          dateTime,
-                                          style: TextStyle(
-                                            color: AppColors.blackColor,
-
-                                            fontWeight: FontWeight.w600,
+                                          SizedBox(
+                                            height: 60,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                right: 10.0,
+                                              ),
+                                              child: Text(
+                                                article.title.toString(),
+                                                maxLines: 3,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  color: AppColors.blackColor,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                          SizedBox(height: 10),
+
+                                          Text(
+                                            dateTime,
+                                            style: TextStyle(
+                                              color: AppColors.blackColor,
+
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             );
                           },

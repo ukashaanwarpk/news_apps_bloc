@@ -6,12 +6,14 @@ class TCircularIcon extends StatelessWidget {
   final double width;
   final Color bgColor;
   final IconData icon;
+  final Color iconColor;
   const TCircularIcon({
     super.key,
     this.height = 40,
     this.width = 40,
     this.bgColor = AppColors.lightGreyColor,
     required this.icon,
+    this.iconColor = AppColors.blackColor,
   });
 
   @override
@@ -20,7 +22,7 @@ class TCircularIcon extends StatelessWidget {
       height: height,
       width: width,
       decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
-      child: Icon(icon, size: 20, color: AppColors.blackColor),
+      child: Icon(icon, size: 20, color: iconColor),
     );
   }
 }
