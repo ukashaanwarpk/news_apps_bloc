@@ -15,3 +15,10 @@ class GetCategoryEvent extends NewsEvent {
   @override
   List<Object?> get props => [category];
 }
+
+class GetMoreCategoryEvent extends NewsEvent {
+  final String category;
+  GetMoreCategoryEvent({required this.category});
+  @override
+  List<Object?> get props => [category];
+}

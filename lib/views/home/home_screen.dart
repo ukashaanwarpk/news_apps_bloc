@@ -21,6 +21,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final ScrollController _scrollController = ScrollController();
+
   late NewsBloc newsBloc;
 
   String channelName = 'bbc-news';
@@ -41,6 +43,13 @@ class _HomeScreenState extends State<HomeScreen> {
     newsBloc = NewsBloc(newsRepository: getIt());
     newsBloc.add(GetTopHeadlineEvent(channelName: channelName));
     newsBloc.add(GetCategoryEvent(category: categoryName));
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 200 &&
+          newsBloc.state.hasMore) {
+        newsBloc.add(GetMoreCategoryEvent(category: categoryName));
+      }
+    });
   }
 
   @override
@@ -278,117 +287,132 @@ class _HomeScreenState extends State<HomeScreen> {
                         final articles = topNews.articles ?? [];
 
                         return ListView.builder(
+                          controller: _scrollController,
                           shrinkWrap: true,
                           physics: const BouncingScrollPhysics(),
-                          itemCount: articles.length,
+                          itemCount: articles.length + 1,
 
                           itemBuilder: (context, index) {
-                            final article = articles[index];
-                            final dateTime = DateFormat('dd MMM yyyy').format(
-                              DateTime.parse(article.publishedAt.toString()),
-                            );
-                            return GestureDetector(
-                              onTap:
-                                  () => Navigator.pushNamed(
-                                    context,
-                                    RouteName.detail,
-                                    arguments: {
-                                      'article': article,
-                                      'index': index,
-                                    },
+                            if (index < articles.length) {
+                              final article = articles[index];
+                              final dateTime = DateFormat('dd MMM yyyy').format(
+                                DateTime.parse(article.publishedAt.toString()),
+                              );
+                              return GestureDetector(
+                                onTap:
+                                    () => Navigator.pushNamed(
+                                      context,
+                                      RouteName.detail,
+                                      arguments: {
+                                        'article': article,
+                                        'index': index,
+                                      },
+                                    ),
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(vertical: 10),
+
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.08,
+                                        ),
+                                        blurRadius: 8,
+                                        offset: Offset(0, 4),
+                                      ),
+                                    ],
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                              child: Container(
-                                margin: EdgeInsets.symmetric(vertical: 10),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Hero(
+                                        tag:
+                                            'image$index${article.urlToImage.toString()}',
+                                        child: TCachedNetwrokImage(
+                                          imageUrl:
+                                              article.urlToImage.toString(),
 
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.08,
+                                          width: size.width * 0.30,
+                                        ),
                                       ),
-                                      blurRadius: 8,
-                                      offset: Offset(0, 4),
-                                    ),
-                                  ],
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Hero(
-                                      tag:
-                                          'image$index${article.urlToImage.toString()}',
-                                      child: TCachedNetwrokImage(
-                                        imageUrl: article.urlToImage.toString(),
-
-                                        width: size.width * 0.30,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            margin: const EdgeInsets.only(
-                                              top: 10,
-                                            ),
-                                            padding:
-                                                const EdgeInsets.all(
-                                                  5,
-                                                ).copyWith(),
-                                            decoration: BoxDecoration(
-                                              color: Colors.redAccent,
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            child: Text(
-                                              article.source!.name.toString(),
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              margin: const EdgeInsets.only(
+                                                top: 10,
                                               ),
-                                            ),
-                                          ),
-                                          SizedBox(height: 10),
-
-                                          SizedBox(
-                                            height: 60,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                right: 10.0,
+                                              padding:
+                                                  const EdgeInsets.all(
+                                                    5,
+                                                  ).copyWith(),
+                                              decoration: BoxDecoration(
+                                                color: Colors.redAccent,
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
                                               ),
                                               child: Text(
-                                                article.title.toString(),
-                                                maxLines: 3,
-                                                overflow: TextOverflow.ellipsis,
+                                                article.source!.name.toString(),
                                                 style: TextStyle(
-                                                  color: AppColors.blackColor,
+                                                  color: Colors.white,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          SizedBox(height: 10),
+                                            SizedBox(height: 10),
 
-                                          Text(
-                                            dateTime,
-                                            style: TextStyle(
-                                              color: AppColors.blackColor,
-
-                                              fontWeight: FontWeight.w600,
+                                            SizedBox(
+                                              height: 60,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                  right: 10.0,
+                                                ),
+                                                child: Text(
+                                                  article.title.toString(),
+                                                  maxLines: 3,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    color: AppColors.blackColor,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                            SizedBox(height: 10),
+
+                                            Text(
+                                              dateTime,
+                                              style: TextStyle(
+                                                color: AppColors.blackColor,
+
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            } else {
+                              return state.hasMore
+                                  ? Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  )
+                                  : SizedBox();
+                            }
                           },
                         );
                       default:

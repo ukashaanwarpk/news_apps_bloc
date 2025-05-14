@@ -9,11 +9,15 @@ class AppUrl {
   static const String sources = 'sources';
   static const String q = 'q';
 
+  static const String pageSize = 'pagesize';
+
+  static const int count = 10;
+
   static String getTopHeadlinesUrl(String channelName) {
     return '$baseUrl$topHeadlines?$sources=$channelName&apiKey=$apiKey';
   }
 
-  static String getCategoryUrl(String category) {
-    return '$baseUrl$everything?$q=$category&apiKey=$apiKey';
+  static String getCategoryUrl(int page, String category) {
+    return '$baseUrl$everything?$q=$category&$pageSize=$count&page=$page&apiKey=$apiKey';
   }
 }

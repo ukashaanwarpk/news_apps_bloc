@@ -7,8 +7,11 @@ import 'news_repository.dart';
 class HttpsNewsRepository extends NewsRepository {
   final _api = NetworkApiService();
   @override
-  Future<CategoryNewsModel> getCategoryNews(String category) async {
-    final response = await _api.getApi(AppUrl.getCategoryUrl(category));
+  Future<CategoryNewsModel> getCategoryNews({
+    required String category,
+    required int page,
+  }) async {
+    final response = await _api.getApi(AppUrl.getCategoryUrl(page, category));
     return CategoryNewsModel.fromJson(response);
   }
 
