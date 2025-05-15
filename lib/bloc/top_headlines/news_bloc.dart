@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:news_apps_bloc/bloc/top_headlines/news_event.dart';
 import 'package:news_apps_bloc/data/response/api_response.dart';
 import 'package:news_apps_bloc/model/category_news_model.dart';
@@ -68,11 +69,12 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     GetMoreCategoryEvent event,
     Emitter<NewsState> emit,
   ) async {
-    if (state.hasMore || state.apiResponseCategory.status == Status.loading) {
+    if (!state.hasMore || state.apiResponseCategory.status == Status.loading) {
       return;
     }
 
     final nextPage = state.page + 1;
+    debugPrint('nextPage: $nextPage');
 
     try {
       final categoryNewsModel = await newsRepository.getCategoryNews(
@@ -103,6 +105,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
         }
       }
     } catch (e) {
+      debugPrint('The error in getMoreCategoryEvent: $e');
       emit(
         state.copyWith(
           apiResponseCategory: ApiResponse.error(e.toString()),

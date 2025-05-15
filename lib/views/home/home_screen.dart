@@ -83,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: SingleChildScrollView(
+            controller: _scrollController,
             child: Column(
               children: [
                 SizedBox(
@@ -112,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           decoration: BoxDecoration(
                             color:
                                 channelName == channel
-                                    ? Colors.redAccent
+                                    ? AppColors.primaryColor
                                     : AppColors.lightGreyColor,
 
                             borderRadius: BorderRadius.circular(20),
@@ -287,7 +288,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         final articles = topNews.articles ?? [];
 
                         return ListView.builder(
-                          controller: _scrollController,
                           shrinkWrap: true,
                           physics: const BouncingScrollPhysics(),
                           itemCount: articles.length + 1,
@@ -295,7 +295,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           itemBuilder: (context, index) {
                             if (index < articles.length) {
                               final article = articles[index];
-                              final dateTime = DateFormat('dd MMM yyyy').format(
+                              final dateTime = DateFormat(
+                                'MMMM d, y h:mma',
+                              ).format(
                                 DateTime.parse(article.publishedAt.toString()),
                               );
                               return GestureDetector(
@@ -309,6 +311,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       },
                                     ),
                                 child: Container(
+                                  height: 165,
                                   margin: EdgeInsets.symmetric(vertical: 10),
 
                                   decoration: BoxDecoration(
@@ -334,6 +337,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         child: TCachedNetwrokImage(
                                           imageUrl:
                                               article.urlToImage.toString(),
+                                          height: 165,
 
                                           width: size.width * 0.30,
                                         ),
@@ -346,54 +350,59 @@ class _HomeScreenState extends State<HomeScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Container(
-                                              margin: const EdgeInsets.only(
-                                                top: 10,
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.all(
-                                                    5,
-                                                  ).copyWith(),
+                                              padding: const EdgeInsets.all(7),
+                                              margin: EdgeInsets.only(top: 10),
                                               decoration: BoxDecoration(
-                                                color: Colors.redAccent,
+                                                color: AppColors.primaryColor,
                                                 borderRadius:
-                                                    BorderRadius.circular(12),
+                                                    BorderRadius.circular(18),
                                               ),
                                               child: Text(
-                                                article.source!.name.toString(),
+                                                article.author == null
+                                                    ? 'Unknown'
+                                                    : article.author.toString(),
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(height: 10),
-
                                             SizedBox(
-                                              height: 60,
+                                              height: 80,
                                               child: Padding(
                                                 padding: const EdgeInsets.only(
                                                   right: 10.0,
+                                                  top: 10,
                                                 ),
                                                 child: Text(
                                                   article.title.toString(),
                                                   maxLines: 3,
+
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                    color: AppColors.blackColor,
+                                                    fontSize: 16,
+                                                    color:
+                                                        AppColors
+                                                            .primaryTextColor,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
                                               ),
                                             ),
                                             SizedBox(height: 10),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                bottom: 8.0,
+                                              ),
+                                              child: Text(
+                                                dateTime,
+                                                style: TextStyle(
+                                                  color: AppColors.greyColor
+                                                      .withValues(alpha: 0.70),
 
-                                            Text(
-                                              dateTime,
-                                              style: TextStyle(
-                                                color: AppColors.blackColor,
-
-                                                fontWeight: FontWeight.w600,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
                                               ),
                                             ),
                                           ],

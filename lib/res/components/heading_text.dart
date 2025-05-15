@@ -21,7 +21,11 @@ class THeadingText extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.secondaryTextColor,
+          ),
         ),
         if (show)
           Text(
@@ -29,7 +33,8 @@ class THeadingText extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: AppColors.greyColor,
+
+              color: Colors.grey.shade600,
             ),
           ),
       ],

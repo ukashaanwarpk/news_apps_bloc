@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:news_apps_bloc/config/colors/app_colors.dart';
 import 'package:news_apps_bloc/model/category_news_model.dart';
 import 'package:news_apps_bloc/res/components/cached_network_image.dart';
-import 'package:news_apps_bloc/res/components/circular_icon.dart';
 
 class DetailScreen extends StatelessWidget {
   final Articles article;
@@ -14,139 +13,116 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final dateTime = DateFormat(
-      'dd MMM yyyy',
+      'MMMM d, y h:mma',
     ).format(DateTime.parse(article.publishedAt.toString()));
 
     return Scaffold(
-      body: Stack(
-        children: [
-          Hero(
-            tag: 'image$index${article.urlToImage.toString()}',
-
-            child: TCachedNetwrokImage(
-              imageUrl: article.urlToImage.toString(),
-              height: size.height * 0.60,
-              width: double.infinity,
-              radius: 0,
-            ),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          article.source!.name.toString(),
+          style: const TextStyle(
+            color: AppColors.primaryTextColor,
+            fontWeight: FontWeight.bold,
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              padding: EdgeInsets.all(20),
-              height: size.height * 0.50,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        ),
+        iconTheme: IconThemeData(
+          color: AppColors.blackColor.withValues(alpha: 0.70),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.share,
+              color: AppColors.blackColor.withValues(alpha: 0.70),
+            ),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.bookmark,
+              color: AppColors.blackColor.withValues(alpha: 0.70),
+            ),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.more_vert,
+              color: AppColors.blackColor.withValues(alpha: 0.70),
+            ),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    article.source!.name.toString(),
-                    style: TextStyle(
-                      color: AppColors.blackColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25,
+                  Container(
+                    padding: const EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor,
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: Text(
+                      article.author == null
+                          ? 'Unknown'
+                          : article.author.toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 20),
                   Text(
-                    article.description.toString(),
+                    dateTime,
                     style: TextStyle(
-                      color: AppColors.blackColor,
-                      fontWeight: FontWeight.w400,
+                      color: AppColors.greyColor.withValues(alpha: 0.70),
+
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-          Positioned(
-            top: 40,
-            left: 10,
-            right: 10,
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: TCircularIcon(
-                    height: 45,
-                    width: 45,
-                    icon: Icons.arrow_back_ios_new_rounded,
-                    bgColor: AppColors.blackColor.withValues(alpha: 0.30),
-                    iconColor: Colors.white,
-                  ),
-                ),
-                Spacer(),
-
-                TCircularIcon(
-                  height: 45,
-                  width: 45,
-
-                  icon: Icons.bookmark,
-                  bgColor: AppColors.blackColor.withValues(alpha: 0.30),
-                  iconColor: Colors.white,
-                ),
-                SizedBox(width: 10),
-                TCircularIcon(
-                  height: 45,
-                  width: 45,
-                  icon: Icons.more_horiz,
-                  bgColor: AppColors.blackColor.withValues(alpha: 0.30),
-                  iconColor: Colors.white,
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            left: 20,
-            top: size.height * 0.30,
-            child: Container(
-              padding: const EdgeInsets.all(5).copyWith(),
-              decoration: BoxDecoration(
-                color: Colors.redAccent,
-                borderRadius: BorderRadius.circular(12),
-              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               child: Text(
-                article.source!.name.toString(),
+                article.title.toString(),
+
                 style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                  color: AppColors.primaryTextColor,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),
-          ),
-          Positioned(
-            left: 20,
-            right: 20,
-            top: size.height * 0.36,
-            child: Text(
-              article.title.toString(),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: AppColors.whiteColor,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Positioned(
-            left: 20,
-            top: size.height * 0.43,
-            child: Text(
-              dateTime,
-              style: TextStyle(
-                color: AppColors.whiteColor,
+            Hero(
+              tag: 'image$index${article.urlToImage.toString()}',
 
-                fontWeight: FontWeight.w600,
+              child: TCachedNetwrokImage(
+                imageUrl: article.urlToImage.toString(),
+                height: size.height * 0.30,
+                width: double.infinity,
+                radius: 50,
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              child: Text(
+                article.description.toString(),
+                style: TextStyle(
+                  color: AppColors.secondaryTextColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
