@@ -67,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
         leadingWidth: 60,
         leading: Padding(
           padding: const EdgeInsets.only(left: 20),
-          child: TCircularIcon(icon: Icons.menu),
+          child: InkWell(onTap: () {}, child: TCircularIcon(icon: Icons.menu)),
         ),
         actions: [
           TCircularIcon(icon: Icons.search),

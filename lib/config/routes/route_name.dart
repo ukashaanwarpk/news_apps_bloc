@@ -4,4 +4,6 @@ class RouteName {
   static const String home = 'homeScreen';
 
   static const String detail = 'detailScreen';
+
+  static const String categoires = 'categoriesScreen';
 }

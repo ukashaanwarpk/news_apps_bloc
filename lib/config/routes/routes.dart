@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:news_apps_bloc/model/category_news_model.dart';
+import 'package:news_apps_bloc/views/categories/categories_screen.dart';
 import 'package:news_apps_bloc/views/details/detail_screen.dart';
 import '../../views/home/home_screen.dart';
 import '../../views/splash/splash_screen.dart';
@@ -21,6 +22,11 @@ class Routes {
 
         return MaterialPageRoute(
           builder: (context) => DetailScreen(article: article, index: index),
+        );
+
+      case RouteName.categoires:
+        return MaterialPageRoute(
+          builder: (context) => const CategoriesScreen(),
         );
 
       default:
