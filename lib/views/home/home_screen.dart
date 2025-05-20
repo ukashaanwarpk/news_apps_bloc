@@ -67,7 +67,12 @@ class _HomeScreenState extends State<HomeScreen> {
         leadingWidth: 60,
         leading: Padding(
           padding: const EdgeInsets.only(left: 20),
-          child: InkWell(onTap: () {}, child: TCircularIcon(icon: Icons.menu)),
+          child: InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, RouteName.categoires);
+            },
+            child: TCircularIcon(icon: Icons.menu),
+          ),
         ),
         actions: [
           TCircularIcon(icon: Icons.search),
@@ -398,6 +403,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               child: Text(
                                                 dateTime,
                                                 style: TextStyle(
+                                                  fontSize: 10,
                                                   color: AppColors.greyColor
                                                       .withValues(alpha: 0.70),
 

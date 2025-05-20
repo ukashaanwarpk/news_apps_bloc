@@ -8,6 +8,7 @@ import 'package:news_apps_bloc/config/colors/app_colors.dart';
 import 'package:news_apps_bloc/config/routes/route_name.dart';
 import 'package:news_apps_bloc/res/components/cached_network_image.dart';
 import 'package:news_apps_bloc/utils/enums.dart';
+import 'package:news_apps_bloc/utils/service_locator.dart';
 
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
@@ -21,19 +22,21 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   final ScrollController _scrollController = ScrollController();
 
-  String categoryName = 'General';
+  String categoryName = 'general';
   List<String> categoriesList = [
-    'General',
-    'Entertainment',
-    'Health',
-    'Sports',
-    'Business',
-    'Technology',
+    'general',
+    'entertainment',
+    'health',
+    'sports',
+    'business',
+    'technology',
   ];
 
   @override
   void initState() {
     super.initState();
+
+    newsBloc = NewsBloc(newsRepository: getIt());
     newsBloc.add(GetCategoryEvent(category: categoryName));
 
     _scrollController.addListener(() {
@@ -56,59 +59,60 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 40,
-              child: ListView.builder(
-                itemCount: categoriesList.length,
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  final category = categoriesList[index];
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        categoryName = category;
-                        debugPrint('The channel name is $category');
-                      });
+      appBar: AppBar(title: const Text('Categories'), centerTitle: true),
+      body: BlocProvider(
+        create: (_) => newsBloc,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 40,
+                child: ListView.builder(
+                  itemCount: categoriesList.length,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    final category = categoriesList[index];
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          categoryName = category;
+                          debugPrint('The channel name is $category');
+                        });
 
-                      newsBloc.add(GetCategoryEvent(category: category));
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      margin: EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        color:
-                            categoryName == category
-                                ? AppColors.primaryColor
-                                : AppColors.lightGreyColor,
+                        newsBloc.add(GetCategoryEvent(category: category));
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        margin: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color:
+                              categoryName == category
+                                  ? AppColors.primaryColor
+                                  : AppColors.lightGreyColor,
 
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(
-                        child: Text(
-                          category,
-                          style: TextStyle(
-                            color:
-                                categoryName == category
-                                    ? AppColors.whiteColor
-                                    : AppColors.blackColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Center(
+                          child: Text(
+                            category[0].toUpperCase() + category.substring(1),
+                            style: TextStyle(
+                              color:
+                                  categoryName == category
+                                      ? AppColors.whiteColor
+                                      : AppColors.blackColor,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
-            SizedBox(height: 20),
+              SizedBox(height: 20),
 
-            BlocProvider(
-              create: (_) => newsBloc,
-              child: BlocBuilder<NewsBloc, NewsState>(
+              BlocBuilder<NewsBloc, NewsState>(
                 builder: (context, state) {
                   switch (state.apiResponseCategory.status) {
                     case Status.loading:
@@ -120,7 +124,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         ),
                       );
                     case Status.success:
-                      if (state.apiResponseChannel.data == null) {
+                      if (state.apiResponseCategory.data == null) {
                         return const Center(child: Text('No data available'));
                       }
                       final topNews = state.apiResponseCategory.data!;
@@ -186,7 +190,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                       const SizedBox(width: 10),
                                       Expanded(
                                         child: Column(
-                                          mainAxisSize: MainAxisSize.min,
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
@@ -202,6 +205,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                                 article.author == null
                                                     ? 'Unknown'
                                                     : article.author.toString(),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.bold,
@@ -218,7 +223,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                                 child: Text(
                                                   article.title.toString(),
                                                   maxLines: 3,
-
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style: TextStyle(
@@ -239,6 +243,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                               child: Text(
                                                 dateTime,
                                                 style: TextStyle(
+                                                  fontSize: 10,
                                                   color: AppColors.greyColor
                                                       .withValues(alpha: 0.70),
 
@@ -271,8 +276,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   }
                 },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
