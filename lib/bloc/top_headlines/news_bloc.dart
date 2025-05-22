@@ -69,12 +69,14 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     GetMoreCategoryEvent event,
     Emitter<NewsState> emit,
   ) async {
-    if (!state.hasMore || state.apiResponseCategory.status == Status.loading) {
+    if (!state.hasMore || state.isFetchingMore) {
       return;
     }
 
     final nextPage = state.page + 1;
     debugPrint('nextPage: $nextPage');
+
+    emit(state.copyWith(isFetchingMore: true));
 
     try {
       final categoryNewsModel = await newsRepository.getCategoryNews(
@@ -83,7 +85,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
       );
 
       if (categoryNewsModel.articles!.isEmpty) {
-        emit(state.copyWith(hasMore: false));
+        emit(state.copyWith(hasMore: false, isFetchingMore: false));
       } else {
         final currentData = state.apiResponseCategory.data;
 
@@ -100,6 +102,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
               ),
               hasMore: true,
               page: nextPage,
+              isFetchingMore: false,
             ),
           );
         }
@@ -110,6 +113,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
         state.copyWith(
           apiResponseCategory: ApiResponse.error(e.toString()),
           hasMore: false,
+          isFetchingMore: false,
         ),
       );
     }

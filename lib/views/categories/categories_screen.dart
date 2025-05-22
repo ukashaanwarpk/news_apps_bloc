@@ -42,7 +42,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 200 &&
-          newsBloc.state.hasMore) {
+          newsBloc.state.hasMore &&
+          !newsBloc.state.isFetchingMore) {
         newsBloc.add(GetMoreCategoryEvent(category: categoryName));
       }
     });
@@ -193,26 +194,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Container(
-                                              padding: const EdgeInsets.all(7),
-                                              margin: EdgeInsets.only(top: 10),
-                                              decoration: BoxDecoration(
-                                                color: AppColors.primaryColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(18),
-                                              ),
-                                              child: Text(
-                                                article.author == null
-                                                    ? 'Unknown'
-                                                    : article.author.toString(),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
                                             SizedBox(
                                               height: 80,
                                               child: Padding(
@@ -222,7 +203,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                                 ),
                                                 child: Text(
                                                   article.title.toString(),
-                                                  maxLines: 3,
+                                                  maxLines: 2,
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style: TextStyle(

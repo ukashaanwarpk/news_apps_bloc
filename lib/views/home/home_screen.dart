@@ -46,7 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 200 &&
-          newsBloc.state.hasMore) {
+          newsBloc.state.hasMore &&
+          !newsBloc.state.isFetchingMore) {
         newsBloc.add(GetMoreCategoryEvent(category: categoryName));
       }
     });
@@ -354,24 +355,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Container(
-                                              padding: const EdgeInsets.all(7),
-                                              margin: EdgeInsets.only(top: 10),
-                                              decoration: BoxDecoration(
-                                                color: AppColors.primaryColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(18),
-                                              ),
-                                              child: Text(
-                                                article.author == null
-                                                    ? 'Unknown'
-                                                    : article.author.toString(),
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
                                             SizedBox(
                                               height: 80,
                                               child: Padding(
@@ -381,7 +364,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ),
                                                 child: Text(
                                                   article.title.toString(),
-                                                  maxLines: 3,
+                                                  maxLines: 2,
 
                                                   overflow:
                                                       TextOverflow.ellipsis,

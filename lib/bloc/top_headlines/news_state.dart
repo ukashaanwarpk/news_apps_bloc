@@ -10,11 +10,14 @@ class NewsState extends Equatable {
   final bool hasMore;
   final int page;
 
+  final bool isFetchingMore;
+
   const NewsState({
     required this.apiResponseChannel,
     required this.apiResponseCategory,
     this.page = 1,
     this.hasMore = true,
+    this.isFetchingMore = false,
   });
 
   @override
@@ -23,6 +26,7 @@ class NewsState extends Equatable {
     apiResponseCategory,
     hasMore,
     page,
+    isFetchingMore,
   ];
 
   NewsState copyWith({
@@ -30,12 +34,14 @@ class NewsState extends Equatable {
     ApiResponse<CategoryNewsModel>? apiResponseCategory,
     bool? hasMore,
     int? page,
+    bool? isFetchingMore,
   }) {
     return NewsState(
       apiResponseChannel: apiResponseChannel ?? this.apiResponseChannel,
       apiResponseCategory: apiResponseCategory ?? this.apiResponseCategory,
       hasMore: hasMore ?? this.hasMore,
       page: page ?? this.page,
+      isFetchingMore: isFetchingMore ?? this.isFetchingMore,
     );
   }
 }
