@@ -8,6 +8,8 @@ import 'package:news_apps_bloc/config/colors/app_colors.dart';
 import 'package:news_apps_bloc/config/routes/route_name.dart';
 import 'package:news_apps_bloc/res/components/cached_network_image.dart';
 import 'package:news_apps_bloc/res/components/circular_icon.dart';
+import 'package:news_apps_bloc/res/components/shimmer.dart';
+import 'package:news_apps_bloc/res/components/shimmer_list.dart';
 import 'package:news_apps_bloc/utils/enums.dart';
 import 'package:news_apps_bloc/utils/service_locator.dart';
 import '../../res/components/heading_text.dart';
@@ -126,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           child: Center(
                             child: Text(
-                              channel,
+                              channel[0].toUpperCase() + channel.substring(1),
                               style: TextStyle(
                                 color:
                                     channelName == channel
@@ -149,7 +151,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (context, state) {
                     switch (state.apiResponseChannel.status) {
                       case Status.loading:
-                        return const Center(child: CircularProgressIndicator());
+                        return TShimmer(
+                          height: size.height * 0.30,
+                          width: size.width * 0.90,
+                          radius: 20,
+                        );
                       case Status.error:
                         return Center(
                           child: Text(
@@ -279,7 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (context, state) {
                     switch (state.apiResponseCategory.status) {
                       case Status.loading:
-                        return const Center(child: CircularProgressIndicator());
+                        return TShimmerList();
                       case Status.error:
                         return Center(
                           child: Text(
@@ -287,7 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                       case Status.success:
-                        if (state.apiResponseChannel.data == null) {
+                        if (state.apiResponseCategory.data == null) {
                           return const Center(child: Text('No data available'));
                         }
                         final topNews = state.apiResponseCategory.data!;
@@ -317,7 +323,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       },
                                     ),
                                 child: Container(
-                                  height: 165,
                                   margin: EdgeInsets.symmetric(vertical: 10),
 
                                   decoration: BoxDecoration(
@@ -343,9 +348,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         child: TCachedNetwrokImage(
                                           imageUrl:
                                               article.urlToImage.toString(),
-                                          height: 165,
+                                          height: size.width * 0.25,
 
-                                          width: size.width * 0.30,
+                                          width: size.width * 0.25,
                                         ),
                                       ),
                                       const SizedBox(width: 10),
@@ -355,26 +360,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            SizedBox(
-                                              height: 80,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                  right: 10.0,
-                                                  top: 10,
-                                                ),
-                                                child: Text(
-                                                  article.title.toString(),
-                                                  maxLines: 2,
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                right: 10.0,
+                                                top: 10,
+                                              ),
+                                              child: Text(
+                                                article.title.toString(),
+                                                maxLines: 2,
 
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    color:
-                                                        AppColors
-                                                            .primaryTextColor,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
@@ -383,15 +382,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                               padding: const EdgeInsets.only(
                                                 bottom: 8.0,
                                               ),
-                                              child: Text(
-                                                dateTime,
-                                                style: TextStyle(
-                                                  fontSize: 10,
-                                                  color: AppColors.greyColor
-                                                      .withValues(alpha: 0.70),
+                                              child: Row(
+                                                spacing: 5,
+                                                children: [
+                                                  Icon(
+                                                    Icons.calendar_month,
+                                                    size: 18,
+                                                    color: AppColors.greyColor
+                                                        .withValues(
+                                                          alpha: 0.70,
+                                                        ),
+                                                  ),
 
-                                                  fontWeight: FontWeight.w600,
-                                                ),
+                                                  Text(
+                                                    dateTime,
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: AppColors.greyColor
+                                                          .withValues(
+                                                            alpha: 0.70,
+                                                          ),
+
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ],

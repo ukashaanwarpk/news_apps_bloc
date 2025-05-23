@@ -16,47 +16,53 @@ class TShimmerList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: ListView.builder(
-        itemBuilder: (context, index) {
-          return Container(
-            height: 165,
-            margin: EdgeInsets.symmetric(vertical: 10),
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: itemCount,
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        final size = MediaQuery.of(context).size;
+        return Container(
+          margin: EdgeInsets.only(top: 20),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TShimmer(
+                height: size.width * 0.25,
+                width: size.width * 0.25,
+                radius: radius,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TShimmer(
+                      height: 20,
+                      width: size.width * 0.80,
+                      radius: radius,
+                    ),
 
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
-                  blurRadius: 8,
-                  offset: Offset(0, 4),
+                    const SizedBox(height: 10),
+                    TShimmer(
+                      height: 20,
+                      width: size.width * 0.80,
+                      radius: radius,
+                    ),
+                    const SizedBox(height: 10),
+                    TShimmer(
+                      height: 20,
+                      width: size.width * 0.40,
+                      radius: radius,
+                    ),
+                  ],
                 ),
-              ],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TShimmer(height: 165, width: width, radius: radius),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 20, width: 60),
-                      SizedBox(height: 20, width: 60),
-                      SizedBox(height: 20, width: 60),
-                      SizedBox(height: 10),
-                      SizedBox(height: 20, width: 60),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

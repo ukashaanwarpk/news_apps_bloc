@@ -7,6 +7,7 @@ import 'package:news_apps_bloc/bloc/top_headlines/news_state.dart';
 import 'package:news_apps_bloc/config/colors/app_colors.dart';
 import 'package:news_apps_bloc/config/routes/route_name.dart';
 import 'package:news_apps_bloc/res/components/cached_network_image.dart';
+import 'package:news_apps_bloc/res/components/shimmer_list.dart';
 import 'package:news_apps_bloc/utils/enums.dart';
 import 'package:news_apps_bloc/utils/service_locator.dart';
 
@@ -117,7 +118,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 builder: (context, state) {
                   switch (state.apiResponseCategory.status) {
                     case Status.loading:
-                      return const Center(child: CircularProgressIndicator());
+                      return TShimmerList();
                     case Status.error:
                       return Center(
                         child: Text(
@@ -157,7 +158,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                       },
                                     ),
                                 child: Container(
-                                  height: 165,
                                   margin: EdgeInsets.symmetric(vertical: 10),
 
                                   decoration: BoxDecoration(
@@ -183,9 +183,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                         child: TCachedNetwrokImage(
                                           imageUrl:
                                               article.urlToImage.toString(),
-                                          height: 165,
+                                          height: size.width * 0.25,
 
-                                          width: size.width * 0.30,
+                                          width: size.width * 0.25,
                                         ),
                                       ),
                                       const SizedBox(width: 10),
@@ -194,25 +194,21 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            SizedBox(
-                                              height: 80,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                  right: 10.0,
-                                                  top: 10,
-                                                ),
-                                                child: Text(
-                                                  article.title.toString(),
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    color:
-                                                        AppColors
-                                                            .primaryTextColor,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                right: 10.0,
+                                                top: 10,
+                                              ),
+                                              child: Text(
+                                                article.title.toString(),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color:
+                                                      AppColors
+                                                          .primaryTextColor,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
@@ -221,15 +217,32 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                               padding: const EdgeInsets.only(
                                                 bottom: 8.0,
                                               ),
-                                              child: Text(
-                                                dateTime,
-                                                style: TextStyle(
-                                                  fontSize: 10,
-                                                  color: AppColors.greyColor
-                                                      .withValues(alpha: 0.70),
+                                              child: Row(
+                                                spacing: 5,
+                                                children: [
+                                                  Icon(
+                                                    Icons.calendar_month,
+                                                    size: 18,
+                                                    color: AppColors.greyColor
+                                                        .withValues(
+                                                          alpha: 0.70,
+                                                        ),
+                                                  ),
 
-                                                  fontWeight: FontWeight.w600,
-                                                ),
+                                                  Text(
+                                                    dateTime,
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: AppColors.greyColor
+                                                          .withValues(
+                                                            alpha: 0.70,
+                                                          ),
+
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ],

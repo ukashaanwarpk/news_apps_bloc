@@ -24,7 +24,7 @@ class THeadingText extends StatelessWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: AppColors.secondaryTextColor,
+            color: AppColors.blackColor,
           ),
         ),
         if (show)
