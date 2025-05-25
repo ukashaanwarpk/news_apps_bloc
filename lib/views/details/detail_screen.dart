@@ -18,14 +18,6 @@ class DetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          article.source!.name.toString(),
-          style: const TextStyle(
-            color: AppColors.primaryTextColor,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
         iconTheme: IconThemeData(
           color: AppColors.blackColor.withValues(alpha: 0.70),
         ),
@@ -58,6 +50,20 @@ class DetailScreen extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              child: Text(
+                article.title.toString(),
+
+                style: TextStyle(
+                  fontSize: 30,
+                  color: AppColors.primaryTextColor,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+              ).copyWith(bottom: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -86,18 +92,6 @@ class DetailScreen extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              child: Text(
-                article.title.toString(),
-
-                style: TextStyle(
-                  fontSize: 30,
-                  color: AppColors.primaryTextColor,
-                  fontWeight: FontWeight.w900,
-                ),
               ),
             ),
             Hero(

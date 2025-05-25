@@ -118,7 +118,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 builder: (context, state) {
                   switch (state.apiResponseCategory.status) {
                     case Status.loading:
-                      return TShimmerList();
+                      return TShimmerList(isExpanded: true);
                     case Status.error:
                       return Center(
                         child: Text(

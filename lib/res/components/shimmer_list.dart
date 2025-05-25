@@ -6,16 +6,22 @@ class TShimmerList extends StatelessWidget {
   final double height;
   final double width;
   final double radius;
+  final bool isExpanded;
   const TShimmerList({
     super.key,
     this.itemCount = 6,
     this.height = 100,
     this.width = double.infinity,
     this.radius = 10,
+    this.isExpanded = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    return isExpanded ? Expanded(child: buildList()) : buildList();
+  }
+
+  Widget buildList() {
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
       itemCount: itemCount,

@@ -147,6 +147,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 THeadingText(title: 'Top Headline', show: false),
                 SizedBox(height: 20),
 
+                SizedBox(height: 20),
+
                 BlocBuilder<NewsBloc, NewsState>(
                   builder: (context, state) {
                     switch (state.apiResponseChannel.status) {
@@ -171,12 +173,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         return SizedBox(
                           height: size.height * 0.30,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: articals.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
+                          child: CarouselView(
+                            backgroundColor: AppColors.whiteColor,
+                            itemExtent: size.width * 0.90,
+                            children: List.generate(articals.length, (
+                              int index,
+                            ) {
                               final news = articals[index];
                               final dateTime = timeago.format(
                                 DateTime.parse(news.publishedAt!),
@@ -220,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                   Positioned(
                                     left: 30,
-                                    top: 130,
+                                    top: 110,
                                     child: Row(
                                       children: [
                                         Text(
@@ -251,7 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                   Positioned(
-                                    bottom: -30,
+                                    bottom: -20,
                                     left: 30,
                                     child: SizedBox(
                                       height: 100,
@@ -269,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ],
                               );
-                            },
+                            }),
                           ),
                         );
                       default:
