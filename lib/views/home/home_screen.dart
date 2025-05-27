@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:news_apps_bloc/bloc/top_headlines/news_bloc.dart';
@@ -325,99 +326,120 @@ class _HomeScreenState extends State<HomeScreen> {
                                       },
                                     ),
                                 child: Container(
-                                  margin: EdgeInsets.symmetric(vertical: 10),
-
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.08,
-                                        ),
-                                        blurRadius: 8,
-                                        offset: Offset(0, 4),
+                                      margin: EdgeInsets.symmetric(
+                                        vertical: 10,
                                       ),
-                                    ],
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Hero(
-                                        tag:
-                                            'image$index${article.urlToImage.toString()}',
-                                        child: TCachedNetwrokImage(
-                                          imageUrl:
-                                              article.urlToImage.toString(),
-                                          height: size.width * 0.25,
 
-                                          width: size.width * 0.25,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                right: 10.0,
-                                                top: 10,
-                                              ),
-                                              child: Text(
-                                                article.title.toString(),
-                                                maxLines: 2,
-
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(
+                                              alpha: 0.08,
                                             ),
-                                            SizedBox(height: 10),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                bottom: 8.0,
-                                              ),
-                                              child: Row(
-                                                spacing: 5,
-                                                children: [
-                                                  Icon(
-                                                    Icons.calendar_month,
-                                                    size: 18,
-                                                    color: AppColors.greyColor
-                                                        .withValues(
-                                                          alpha: 0.70,
-                                                        ),
-                                                  ),
+                                            blurRadius: 8,
+                                            offset: Offset(0, 4),
+                                          ),
+                                        ],
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Hero(
+                                            tag:
+                                                'image$index${article.urlToImage.toString()}',
+                                            child: TCachedNetwrokImage(
+                                              imageUrl:
+                                                  article.urlToImage.toString(),
+                                              height: size.width * 0.25,
 
-                                                  Text(
-                                                    dateTime,
+                                              width: size.width * 0.25,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        right: 10.0,
+                                                        top: 10,
+                                                      ),
+                                                  child: Text(
+                                                    article.title.toString(),
+                                                    maxLines: 2,
+
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                     style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: AppColors.greyColor
-                                                          .withValues(
-                                                            alpha: 0.70,
-                                                          ),
-
+                                                      fontSize: 16,
+                                                      color: Colors.black,
                                                       fontWeight:
-                                                          FontWeight.w600,
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                                SizedBox(height: 10),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        bottom: 8.0,
+                                                      ),
+                                                  child: Row(
+                                                    spacing: 5,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.calendar_month,
+                                                        size: 18,
+                                                        color: AppColors
+                                                            .greyColor
+                                                            .withValues(
+                                                              alpha: 0.70,
+                                                            ),
+                                                      ),
+
+                                                      Text(
+                                                        dateTime,
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: AppColors
+                                                              .greyColor
+                                                              .withValues(
+                                                                alpha: 0.70,
+                                                              ),
+
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                ),
+                                    )
+                                    .animate(
+                                      delay: Duration(
+                                        milliseconds: index * 300,
+                                      ),
+                                    )
+                                    .fadeIn(
+                                      duration: 1200.ms,
+                                      curve: Curves.easeOutCubic,
+                                    )
+                                    .slideX(
+                                      begin: index.isEven ? -40 : 40,
+                                      end: 0,
+                                    ),
                               );
                             } else {
                               return state.hasMore
