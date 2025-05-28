@@ -173,108 +173,129 @@ class _HomeScreenState extends State<HomeScreen> {
                         final articals = topNews.articles ?? [];
 
                         return SizedBox(
-                          height: size.height * 0.30,
-                          child: CarouselView(
-                            backgroundColor: AppColors.whiteColor,
-                            itemExtent: size.width * 0.90,
-                            children: List.generate(articals.length, (
-                              int index,
-                            ) {
-                              final news = articals[index];
-                              final dateTime = timeago.format(
-                                DateTime.parse(news.publishedAt!),
-                              );
-                              return Stack(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                    ),
-                                    child: TCachedNetwrokImage(
-                                      radius: 20,
-                                      height: size.height * 0.30,
-                                      width: size.width * 0.90,
+                              height: size.height * 0.30,
+                              child: CarouselView(
+                                shrinkExtent: 200,
 
-                                      imageUrl: news.urlToImage.toString(),
-                                    ),
-                                  ),
-
-                                  Positioned(
-                                    top: 10,
-                                    right: 30,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(6),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.greyColor.withValues(
-                                          alpha: 0.55,
+                                backgroundColor: AppColors.whiteColor,
+                                itemExtent: size.width * 0.90,
+                                children: List.generate(articals.length, (
+                                  int index,
+                                ) {
+                                  final news = articals[index];
+                                  final dateTime = timeago.format(
+                                    DateTime.parse(news.publishedAt!),
+                                  );
+                                  return Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
                                         ),
+                                        child: TCachedNetwrokImage(
+                                          radius: 20,
+                                          height: size.height * 0.30,
+                                          width: size.width * 0.90,
 
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Text(
-                                        '${articals.length}/${index + 1}',
-                                        style: TextStyle(
-                                          color: AppColors.whiteColor,
-                                          fontWeight: FontWeight.bold,
+                                          imageUrl: news.urlToImage.toString(),
                                         ),
                                       ),
-                                    ),
-                                  ),
 
-                                  Positioned(
-                                    left: 30,
-                                    top: 110,
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          news.source!.name.toString(),
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        SizedBox(width: 10),
-                                        Container(
-                                          height: 6,
-                                          width: 6,
+                                      Positioned(
+                                        top: 10,
+                                        right: 30,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(6),
                                           decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
+                                            color: AppColors.greyColor
+                                                .withValues(alpha: 0.55),
+
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(width: 10),
-                                        Text(
-                                          dateTime,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
+                                          child: Text(
+                                            '${articals.length}/${index + 1}',
+                                            style: TextStyle(
+                                              color: AppColors.whiteColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Positioned(
-                                    bottom: -20,
-                                    left: 30,
-                                    child: SizedBox(
-                                      height: 100,
-                                      width: size.width * 0.70,
-                                      child: Text(
-                                        news.title.toString(),
-                                        maxLines: 3,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            }),
-                          ),
-                        );
+
+                                      Positioned(
+                                        left: 30,
+                                        top: 110,
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              news.source!.name.toString(),
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            SizedBox(width: 10),
+                                            Container(
+                                              height: 6,
+                                              width: 6,
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                shape: BoxShape.circle,
+                                              ),
+                                            ),
+                                            SizedBox(width: 10),
+                                            Text(
+                                              dateTime,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ).animate().slideY(
+                                        duration: 1.5.seconds,
+                                        begin: -1,
+                                        end: 0,
+                                        curve: Curves.easeIn,
+                                      ),
+                                      Positioned(
+                                        bottom: -20,
+                                        left: 30,
+                                        child: SizedBox(
+                                          height: 100,
+                                          width: size.width * 0.70,
+                                          child: Text(
+                                            news.title.toString(),
+                                            maxLines: 3,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ).animate().slideY(
+                                        duration: 1.5.seconds,
+                                        begin: 0.80,
+                                        end: 0,
+                                        curve: Curves.easeIn,
+                                      ),
+                                    ],
+                                  );
+                                }),
+                              ),
+                            )
+                            .animate()
+                            .fade(duration: 1.5.seconds)
+                            .slideX(
+                              duration: 2.seconds,
+                              begin: 1,
+                              end: 0,
+                              curve: Curves.fastEaseInToSlowEaseOut,
+                            );
                       default:
                         return SizedBox();
                     }
@@ -429,11 +450,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                     )
                                     .animate(
                                       delay: Duration(
-                                        milliseconds: index * 300,
+                                        milliseconds:
+                                            index *
+                                            200, // delay the index. first item show . after delay second item show.
                                       ),
                                     )
                                     .fadeIn(
-                                      duration: 1200.ms,
+                                      duration:
+                                          100.ms, // duration of how much time it will not show in Ui.
                                       curve: Curves.easeOutCubic,
                                     )
                                     .slideX(
