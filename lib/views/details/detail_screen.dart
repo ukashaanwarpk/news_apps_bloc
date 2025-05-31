@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:news_apps_bloc/config/colors/app_colors.dart';
 import 'package:news_apps_bloc/model/category_news_model.dart';
@@ -48,52 +49,65 @@ class DetailScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              child: Text(
-                article.title.toString(),
-
-                style: TextStyle(
-                  fontSize: 30,
-                  color: AppColors.primaryTextColor,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-              ).copyWith(bottom: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(7),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryColor,
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: Text(
-                      article.author == null
-                          ? 'Unknown'
-                          : article.author.toString(),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 15,
                   ),
-                  Text(
-                    dateTime,
+                  child: Text(
+                    article.title.toString(),
+
                     style: TextStyle(
-                      color: AppColors.greyColor.withValues(alpha: 0.70),
-
-                      fontWeight: FontWeight.w600,
+                      fontSize: 30,
+                      color: AppColors.primaryTextColor,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
-                ],
-              ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                  ).copyWith(bottom: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (article.author != null)
+                        Container(
+                          padding: const EdgeInsets.all(7),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor,
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          child: Text(
+                            article.author.toString(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      Text(
+                        dateTime,
+                        style: TextStyle(
+                          color: AppColors.greyColor.withValues(alpha: 0.70),
+                          fontSize: 13,
+
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ).animate().slideY(
+              duration: 1000.ms,
+              curve: Curves.bounceInOut,
+              begin: -5,
+              end: 0,
             ),
+
             Hero(
               tag: 'image$index${article.urlToImage.toString()}',
 
@@ -104,6 +118,7 @@ class DetailScreen extends StatelessWidget {
                 radius: 50,
               ),
             ),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               child: Text(
@@ -114,6 +129,11 @@ class DetailScreen extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
+            ).animate().slideY(
+              duration: 1000.ms,
+              curve: Curves.bounceInOut,
+              begin: 10,
+              end: 0,
             ),
           ],
         ),
